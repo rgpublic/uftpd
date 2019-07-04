@@ -26,6 +26,7 @@ int   do_syslog   = 1;
 int   do_ftp      = FTP_DEFAULT_PORT;
 int   do_tftp     = TFTP_DEFAULT_PORT;
 int   do_insecure = 0;
+int   do_password = 0;
 pid_t tftp_pid    = 0;
 struct passwd *pw = NULL;
 
@@ -62,6 +63,7 @@ static int usage(int code)
 		       "                      ftp=PORT\n"
 		       "                      tftp=PORT\n"
 		       "                      writable\n"
+               "  -p         Disable anonymous access and check password (taken from user 'ftp')\n"
 		       "  -s         Use syslog, even if running in foreground, default w/o -n\n");
 
 	printf("  -v         Show program version\n\n");
@@ -295,7 +297,7 @@ int main(int argc, char **argv)
 	uev_ctx_t ctx;
 
 	prognm = progname(argv[0]);
-	while ((c = getopt(argc, argv, "hl:no:sv")) != EOF) {
+	while ((c = getopt(argc, argv, "hl:npo:sv")) != EOF) {
 		switch (c) {
 		case 'h':
 			return usage(0);
@@ -310,6 +312,10 @@ int main(int argc, char **argv)
 			background = 0;
 			do_syslog--;
 			break;
+
+        case 'p':
+            do_password = 1;
+            break;
 
 		case 'o':
 			subopts = optarg;

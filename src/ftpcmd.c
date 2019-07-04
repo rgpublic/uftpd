@@ -17,6 +17,7 @@
 
 #include "uftpd.h"
 #include <ctype.h>
+#include <crypt.h>
 #include <arpa/ftp.h>
 #ifdef HAVE_SYS_TIME_H
 # include <sys/time.h>
@@ -256,8 +257,17 @@ static int close_data_connection(ctrl_t *ctrl)
 
 static int check_user_pass(ctrl_t *ctrl)
 {
+    char *encrypted;
+
 	if (!ctrl->name[0])
 		return -1;
+
+    if (do_password) {
+        encrypted = crypt(ctrl->pass, pw->pw_passwd);
+        if (!strcmp(encrypted, pw->pw_passwd))
+            return -1;
+        return 1;
+    }
 
 	if (!strcmp("anonymous", ctrl->name))
 		return 1;
