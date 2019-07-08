@@ -265,8 +265,8 @@ static int check_user_pass(ctrl_t *ctrl)
     if (do_password) {
         encrypted = crypt(ctrl->pass, pw->pw_passwd);
         if (!strcmp(encrypted, pw->pw_passwd))
-            return -1;
-        return 1;
+            return 1;
+        return -1;
     }
 
 	if (!strcmp("anonymous", ctrl->name))
